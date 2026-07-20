@@ -82,19 +82,18 @@ async function getMedia(anilistId) {
         }
         throw new Error(`Jikan 429 for MAL ID ${malId} (exhausted retries)`);
       }
-      if (!r.ok) throw new Error(`Jikan ${r.status}`);
+      if (!r.ok) { jikan = { data: {} }; break; }
       jikan = await r.json();
       break;
     }
-    const d = jikan.data;
-    if (!d) throw new Error(`Jikan returned no data for MAL ID ${malId}`);
+    const d = jikan?.data || {};
     const media = {
       id,
       idMal: malId,
       title: {
-        english: d.title_english ?? null,
-        romaji: d.title ?? null,
-        native: d.title_japanese ?? null
+        english: d.title_english ?? al?.title?.english ?? null,
+        romaji: d.title ?? al?.title?.romaji ?? null,
+        native: d.title_japanese ?? al?.title?.native ?? null
       },
       status: STATUS_MAP[d.status] ?? "RELEASING",
       format: d.type ?? null,
