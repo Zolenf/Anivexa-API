@@ -15,6 +15,9 @@ import {
 import { get, set, isFresh, SHOW_IDENTITY_TTL } from "../core/smartcache.js";
 
 const BASE = "https://anineko.to";
+const OVERRIDES = {
+  "145064": "dont-toy-with-me-miss-nagatoro-2nd-season"
+};
 
 async function search(query) {
   const html = await fetchHtml(`${BASE}/browser?keyword=${encodeURIComponent(query)}`);
@@ -103,6 +106,14 @@ async function resolveSeries(anilistId, ctx = {}) {
   const cacheKey = `np:anineko:${anilistId}`;
   const cached = get(cacheKey);
   if (isFresh(cached)) return cached.data;
+
+  // --- ZMIANA: Twardy nadpis ze słownika OVERRIDES ---
+  if (OVERRIDES[anilistId]) {
+    const data = { slug: OVERRIDES[anilistId], title: "Override", mode: "standard", offset: 0, score: 100 };
+    set(cacheKey, data, SHOW_IDENTITY_TTL);
+    return data;
+  }
+  // ----------------------------------------------------
 
   const media = ctx.media ?? await getMedia(anilistId);
   const titles = buildTitles(media, ctx.anizip);
