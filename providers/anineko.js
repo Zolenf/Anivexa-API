@@ -16,7 +16,7 @@ import { get, set, isFresh, SHOW_IDENTITY_TTL } from "../core/smartcache.js";
 
 const BASE = "https://anineko.to";
 const OVERRIDES = {
-  "145064": "dont-toy-with-me-miss-nagatoro-2nd-season"
+  "145064": "dont-toy-with-me-miss-nagatoro-2nd-attack"
 };
 
 async function search(query) {
