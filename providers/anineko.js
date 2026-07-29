@@ -103,17 +103,15 @@ async function scrapeEpisodeWatch(seriesSlug, epSlug, audio) {
 }
 
 async function resolveSeries(anilistId, ctx = {}) {
+  // --- ZMIANA: Twardy nadpis ze słownika OVERRIDES przed cachem ---
+  if (OVERRIDES[anilistId]) {
+    return { slug: OVERRIDES[anilistId], title: "Override", mode: "standard", offset: 0, score: 100 };
+  }
+  // ----------------------------------------------------------------
+
   const cacheKey = `np:anineko:${anilistId}`;
   const cached = get(cacheKey);
   if (isFresh(cached)) return cached.data;
-
-  // --- ZMIANA: Twardy nadpis ze słownika OVERRIDES ---
-  if (OVERRIDES[anilistId]) {
-    const data = { slug: OVERRIDES[anilistId], title: "Override", mode: "standard", offset: 0, score: 100 };
-    set(cacheKey, data, SHOW_IDENTITY_TTL);
-    return data;
-  }
-  // ----------------------------------------------------
 
   const media = ctx.media ?? await getMedia(anilistId);
   const titles = buildTitles(media, ctx.anizip);
